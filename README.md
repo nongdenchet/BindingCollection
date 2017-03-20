@@ -1,2 +1,2 @@
 # Binding-Collection
-Android Binding Collection with MVVM
+Android Binding Collection with MVVM and DiffUtil
