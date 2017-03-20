@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <import type="com.apidez.bindingcollection.ui.TodoViewModel" />
+        <variable name="todo" type="TodoViewModel" />
+    </data>
+
+    <RelativeLayout
+        android:background="?selectableItemBackground"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/cbCompleted"
+            android:layout_toEndOf="@+id/cbCompleted"
+            android:layout_toLeftOf="@+id/tvRemove"
+            android:layout_toStartOf="@+id/tvRemove"
+            android:textSize="16sp"
+            android:text="@{todo.title}"
+            tools:text="Write Android Blog" />
+
+        <TextView
+            android:id="@+id/tvDueDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tvTitle"
+            android:layout_marginTop="8dp"
+            android:layout_toRightOf="@+id/cbCompleted"
+            android:layout_toEndOf="@+id/cbCompleted"
+            android:layout_toLeftOf="@+id/tvRemove"
+            android:layout_toStartOf="@+id/tvRemove"
+            android:textSize="14sp"
+            android:text="@{todo.dueDate}"
+            tools:text="16/02/2010" />
+
+        <CheckBox
+            android:layout_centerVertical="true"
+            android:id="@+id/cbCompleted"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginRight="16dp"
+            android:layout_marginEnd="16dp"
+            android:checked="@{todo.completed}"
+            tools:checked="true" />
+
+        <TextView
+            android:id="@+id/tvRemove"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:fontFamily="sans-serif-medium"
+            android:textSize="14sp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:visibility="@{todo.removeVisibility}"
+            android:textColor="@android:color/holo_red_dark"
+            android:text="@string/remove"
+            android:textAllCaps="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
+</layout>
