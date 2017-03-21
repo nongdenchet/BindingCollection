@@ -17,7 +17,7 @@ public class TodoViewModel {
         this.completed = todo.completed;
     }
 
-    public TodoViewModel(TodoViewModel todo, boolean completed) {
+    private TodoViewModel(TodoViewModel todo, boolean completed) {
         this.id = todo.id;
         this.title = todo.title;
         this.dueDate = todo.dueDate;
