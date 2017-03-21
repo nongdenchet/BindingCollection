@@ -38,6 +38,7 @@ class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.ViewHolder> {
     public void onBindViewHolder(ViewHolder holder, int position) {
         TodoViewModel todo = getTodos().get(position);
         holder.itemTodoBinding.setTodo(todo);
+        holder.itemTodoBinding.executePendingBindings();
         holder.itemTodoBinding.cbCompleted.setOnCheckedChangeListener((buttonView, isChecked) ->
                 todoListViewModel.setCompleted(holder.getAdapterPosition(), isChecked));
         holder.itemTodoBinding.tvRemove.setOnClickListener(v ->
