@@ -18,7 +18,6 @@ public class BindingUtils {
     @BindingAdapter("android:checked")
     public static void setChecked(CheckBox checkBox, boolean checked) {
         if (checked != checkBox.isChecked()) {
-            checkBox.setOnCheckedChangeListener(null);
             checkBox.setChecked(checked);
             checkBox.jumpDrawablesToCurrentState();
         }

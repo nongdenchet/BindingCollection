@@ -44,10 +44,13 @@ public class TodoListViewModel {
     }
 
     void setCompleted(int position, boolean completed) {
-        TodoViewModel viewModel = todos.get(position).setCompleted(completed);
-        todoRepo.updateTodo(viewModel.toModel());
-        todos.set(position, viewModel);
-        todoListBinder.notifyDataChange(todos);
+        TodoViewModel viewModel = todos.get(position);
+        if (viewModel.completed != completed) {
+            viewModel = viewModel.setCompleted(completed);
+            todoRepo.updateTodo(viewModel.toModel());
+            todos.set(position, viewModel);
+            todoListBinder.notifyDataChange(todos);
+        }
     }
 
     void create(String title, String dueDate) {

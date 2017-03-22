@@ -19,6 +19,8 @@ import io.reactivex.observers.TestObserver;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -79,6 +81,14 @@ public class TodoListViewModelTest {
     }
 
     @Test
+    public void testSetSameCompletedViewModel() throws Exception {
+        todoListViewModel.initialize();
+        todoListViewModel.setCompleted(1, false);
+        assertFalse(todoListViewModel.getTodos().get(1).completed);
+        verify(listBinder, times(1)).notifyDataChange(todoListViewModel.getTodos());
+    }
+
+    @Test
     public void testSetCompletedModel() throws Exception {
         todoListViewModel.initialize();
         todoListViewModel.setCompleted(1, true);
@@ -86,6 +96,13 @@ public class TodoListViewModelTest {
         verify(todoRepo).updateTodo(argument.capture());
         assertTrue(argument.getValue().completed);
         assertEquals(2, argument.getValue().id);
+    }
+
+    @Test
+    public void testSetSameCompletedModel() throws Exception {
+        todoListViewModel.initialize();
+        todoListViewModel.setCompleted(1, false);
+        verify(todoRepo, never()).updateTodo(any(Todo.class));
     }
 
     @Test

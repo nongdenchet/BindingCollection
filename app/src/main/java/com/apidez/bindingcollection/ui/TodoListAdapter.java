@@ -39,10 +39,6 @@ class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.ViewHolder> {
         TodoViewModel todo = getTodos().get(position);
         holder.itemTodoBinding.setTodo(todo);
         holder.itemTodoBinding.executePendingBindings();
-        holder.itemTodoBinding.cbCompleted.setOnCheckedChangeListener((buttonView, isChecked) ->
-                todoListViewModel.setCompleted(holder.getAdapterPosition(), isChecked));
-        holder.itemTodoBinding.tvRemove.setOnClickListener(v ->
-                todoListViewModel.deleteTodo(holder.getAdapterPosition()));
     }
 
     @Override
@@ -56,6 +52,14 @@ class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.ViewHolder> {
         ViewHolder(ItemTodoBinding itemTodoBinding) {
             super(itemTodoBinding.getRoot());
             this.itemTodoBinding = itemTodoBinding;
+            setUpListeners();
+        }
+
+        private void setUpListeners() {
+            itemTodoBinding.cbCompleted.setOnCheckedChangeListener((buttonView, isChecked) ->
+                    todoListViewModel.setCompleted(getAdapterPosition(), isChecked));
+            itemTodoBinding.tvRemove.setOnClickListener(v ->
+                    todoListViewModel.deleteTodo(getAdapterPosition()));
         }
     }
 }
