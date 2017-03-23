@@ -60,7 +60,7 @@ public class TodoListViewModel {
 
     void initialize() {
         disposables.add(observeTodoList());
-        disposables.add(getTodoList.execute()
+        disposables.add(getTodoList.execute(false)
                 .subscribe(() -> {}));
     }
 

@@ -8,4 +8,5 @@ import io.reactivex.Observable;
 
 public interface TodoListProvider {
     Observable<List<Todo>> provide();
+    List<Todo> current();
 }

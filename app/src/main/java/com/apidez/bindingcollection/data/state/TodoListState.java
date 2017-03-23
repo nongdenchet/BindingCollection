@@ -61,4 +61,9 @@ public class TodoListState implements TodoListProvider, TodoListCollector {
     public Observable<List<Todo>> provide() {
         return todoListSubject.hide();
     }
+
+    @Override
+    public List<Todo> current() {
+        return todoListSubject.getValue();
+    }
 }
