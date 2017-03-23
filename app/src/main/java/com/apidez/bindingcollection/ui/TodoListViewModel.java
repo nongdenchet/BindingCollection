@@ -1,8 +1,12 @@
 package com.apidez.bindingcollection.ui;
 
 import com.apidez.bindingcollection.data.model.Todo;
-import com.apidez.bindingcollection.data.repo.TodoRepo;
+import com.apidez.bindingcollection.data.state.TodoListProvider;
 import com.apidez.bindingcollection.di.scope.ActivityScope;
+import com.apidez.bindingcollection.interactor.CreateTodo;
+import com.apidez.bindingcollection.interactor.GetTodoList;
+import com.apidez.bindingcollection.interactor.RemoveTodo;
+import com.apidez.bindingcollection.interactor.UpdateTodo;
 import com.apidez.bindingcollection.support.ListBinder;
 
 import java.util.ArrayList;
@@ -11,19 +15,35 @@ import java.util.List;
 import javax.inject.Inject;
 
 import io.reactivex.Observable;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.subjects.PublishSubject;
 
 @ActivityScope
 public class TodoListViewModel {
     private final ListBinder<TodoViewModel> todoListBinder;
-    private final TodoRepo todoRepo;
-    private final List<TodoViewModel> todos = new ArrayList<>();
+    private final UpdateTodo updateTodo;
+    private final CreateTodo createTodo;
+    private final RemoveTodo removeTodo;
+    private final GetTodoList getTodoList;
+    private final TodoListProvider todoListProvider;
+    private List<TodoViewModel> todos = new ArrayList<>();
     private PublishSubject<Integer> scrollTo = PublishSubject.create();
+    private CompositeDisposable disposables = new CompositeDisposable();
 
     @Inject
-    TodoListViewModel(ListBinder<TodoViewModel> todoListBinder, TodoRepo todoRepo) {
+    public TodoListViewModel(ListBinder<TodoViewModel> todoListBinder,
+                             TodoListProvider todoListProvider,
+                             UpdateTodo updateTodo,
+                             CreateTodo createTodo,
+                             RemoveTodo removeTodo,
+                             GetTodoList getTodoList) {
         this.todoListBinder = todoListBinder;
-        this.todoRepo = todoRepo;
+        this.updateTodo = updateTodo;
+        this.createTodo = createTodo;
+        this.removeTodo = removeTodo;
+        this.getTodoList = getTodoList;
+        this.todoListProvider = todoListProvider;
     }
 
     public Observable<Integer> scrollTo() {
@@ -39,33 +59,39 @@ public class TodoListViewModel {
     }
 
     void initialize() {
-        todos.addAll(toViewModels(todoRepo.getTodos()));
-        todoListBinder.notifyDataChange(todos);
+        disposables.add(observeTodoList());
+        disposables.add(getTodoList.execute()
+                .subscribe(() -> {}));
+    }
+
+    Disposable observeTodoList() {
+        return todoListProvider.provide()
+                .map(this::toViewModels)
+                .subscribe(todoViewModels -> {
+                    todos = todoViewModels;
+                    todoListBinder.notifyDataChange(todoViewModels);
+                });
     }
 
     void setCompleted(int position, boolean completed) {
         TodoViewModel viewModel = todos.get(position);
         if (viewModel.completed != completed) {
             viewModel = viewModel.setCompleted(completed);
-            todoRepo.updateTodo(viewModel.toModel());
-            todos.set(position, viewModel);
-            todoListBinder.notifyDataChange(todos);
+            disposables.add(updateTodo.execute(viewModel.toModel())
+                    .subscribe(() -> {}));
         }
     }
 
     void create(String title, String dueDate) {
-        Todo todo = todoRepo.createTodo(title, dueDate);
-        TodoViewModel viewModel = new TodoViewModel(todo);
-        todos.add(0, viewModel);
-        todoListBinder.notifyDataChange(todos);
-        scrollTo.onNext(0);
+        CreateTodo.Params params = new CreateTodo.Params(title, dueDate);
+        disposables.add(createTodo.execute(params)
+                .subscribe(() -> scrollTo.onNext(0)));
     }
 
     void deleteTodo(int position) {
         TodoViewModel viewModel = todos.get(position);
-        todoRepo.deleteTodo(viewModel.toModel());
-        todos.remove(position);
-        todoListBinder.notifyDataChange(todos);
+        disposables.add(removeTodo.execute(viewModel.toModel())
+                .subscribe(() -> {}));
     }
 
     @SuppressWarnings("Convert2streamapi")
@@ -75,5 +101,9 @@ public class TodoListViewModel {
             viewModels.add(new TodoViewModel(todo));
         }
         return viewModels;
+    }
+
+    void onDestroy() {
+        disposables.clear();
     }
 }

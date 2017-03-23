@@ -77,6 +77,12 @@ public class TodoListActivity extends AppCompatActivity implements NewTodoFragme
     }
 
     @Override
+    protected void onDestroy() {
+        todoListViewModel.onDestroy();
+        super.onDestroy();
+    }
+
+    @Override
     public void onSubmit(String title, String dueDate) {
         todoListViewModel.create(title, dueDate);
     }
