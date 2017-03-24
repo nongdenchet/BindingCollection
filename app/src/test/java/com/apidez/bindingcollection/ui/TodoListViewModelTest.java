@@ -31,8 +31,10 @@ public class TodoListViewModelTest {
     private TodoListViewModel todoListViewModel;
     private TestObserver<Integer> testScrollTo = TestObserver.create();
 
-    @Mock ListBinder<TodoViewModel> listBinder;
-    @Mock TodoRepo todoRepo;
+    @Mock
+    ListBinder<TodoViewModel> listBinder;
+    @Mock
+    TodoRepo todoRepo;
 
     @Before
     public void setUp() throws Exception {
