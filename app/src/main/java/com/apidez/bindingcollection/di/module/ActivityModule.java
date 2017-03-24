@@ -28,7 +28,6 @@ public class ActivityModule {
     }
 
     @Provides
-    @ActivityScope
     public ListBinder<TodoViewModel> provideTodoListBinder(TodoDiffCallback todoDiffCallback) {
         return new ListBinder<>(todoDiffCallback);
     }

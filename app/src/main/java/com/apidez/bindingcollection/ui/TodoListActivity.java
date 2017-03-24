@@ -23,23 +23,28 @@ public class TodoListActivity extends AppCompatActivity implements NewTodoFragme
     private ActivityTodoListBinding activityTodoListBinding;
     private RecyclerView rvTodos;
 
-    @Inject TodoListViewModel todoListViewModel;
-    @Inject TodoListAdapter todoListAdapter;
+    @Inject
+    TodoListViewModel todoListViewModel;
+    @Inject
+    TodoListAdapter todoListAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ((TodoApplication) getApplication())
-                .component()
-                .plus(new ActivityModule(this))
-                .inject(this);
         activityTodoListBinding = DataBindingUtil.setContentView(this, R.layout.activity_todo_list);
-        activityTodoListBinding.setViewModel(todoListViewModel);
+        initDepedency();
         initView();
         initialize();
     }
 
+    private void initDepedency() {
+        ((TodoApplication) getApplication()).component()
+                .plus(new ActivityModule(this))
+                .inject(this);
+    }
+
     private void initialize() {
+        activityTodoListBinding.setViewModel(todoListViewModel);
         todoListViewModel.initialize();
         todoListViewModel.scrollTo()
                 .observeOn(AndroidSchedulers.mainThread())
